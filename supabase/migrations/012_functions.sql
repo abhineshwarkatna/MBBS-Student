@@ -23,8 +23,8 @@ BEGIN
   
   -- Get aggregate attendance counts
   SELECT 
-    COALESCE(COUNT(*), 0) FILTER (WHERE attended = true),
-    COALESCE(COUNT(*), 0) FILTER (WHERE attended = false)
+    COALESCE(COUNT(*) FILTER (WHERE attended = true), 0),
+    COALESCE(COUNT(*) FILTER (WHERE attended = false), 0)
   INTO v_attended, v_missed
   FROM public.attendance
   WHERE user_id = p_user_id AND subject_id = p_subject_id;
