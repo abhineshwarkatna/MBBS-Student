@@ -108,7 +108,7 @@ export const AuthView: React.FC = () => {
             {isSignUp && (
               <>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-450 mb-1.5">Full Name</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Full Name</label>
                   <div className="relative">
                     <User className="absolute left-3.5 top-3 text-slate-400" size={16} />
                     <input
@@ -116,13 +116,13 @@ export const AuthView: React.FC = () => {
                       required
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/50 text-xs font-semibold outline-none focus:ring-2 focus:ring-teal-500"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/50 text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-teal-500"
                       placeholder="e.g. Abhineshwar"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-450 mb-1.5">Medical College</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Medical College</label>
                   <div className="relative">
                     <GraduationCap className="absolute left-3.5 top-3 text-slate-400" size={16} />
                     <input
@@ -130,7 +130,7 @@ export const AuthView: React.FC = () => {
                       required
                       value={college}
                       onChange={(e) => setCollege(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/50 text-xs font-semibold outline-none focus:ring-2 focus:ring-teal-500"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/50 text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-teal-500"
                       placeholder="e.g. AIIMS Delhi"
                     />
                   </div>
@@ -139,7 +139,7 @@ export const AuthView: React.FC = () => {
             )}
 
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-450 mb-1.5">Email Address</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Email Address</label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-3 text-slate-400" size={16} />
                 <input
@@ -147,14 +147,14 @@ export const AuthView: React.FC = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/50 text-xs font-semibold outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/50 text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-teal-500"
                   placeholder="name@college.edu"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-450 mb-1.5">Password</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Password</label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-3 text-slate-400" size={16} />
                 <input
@@ -162,7 +162,7 @@ export const AuthView: React.FC = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/50 text-xs font-semibold outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/50 text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-teal-500"
                   placeholder="••••••••"
                 />
               </div>
