@@ -13,6 +13,21 @@ export const authService = {
       }
     });
     if (error) throw error;
+
+    // If email confirmation is enabled, Supabase returns a user but no session.
+    // Attempt to sign in immediately so the user is logged in right away.
+    if (data.user && !data.session) {
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      // If sign-in fails (e.g. email not confirmed), return signup data anyway
+      // and let the UI show an appropriate message
+      if (!signInError && signInData.session) {
+        return signInData;
+      }
+    }
+
     return data;
   },
 
