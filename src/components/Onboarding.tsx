@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import medtrackLogo from '../assets/medtrack_logo.png';
 import {
-  GraduationCap,
   Activity,
   ChevronRight,
   ChevronLeft,
@@ -117,10 +117,8 @@ export const Onboarding: React.FC = () => {
         <div>
           {/* Wizard Header */}
           <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center space-x-2">
-              <span className="p-2 rounded-xl bg-teal-500 text-white shadow-md shadow-teal-500/10">
-                <GraduationCap size={20} />
-              </span>
+            <div className="flex items-center space-x-2.5">
+              <img src={medtrackLogo} alt="MedTrack AI Logo" className="w-9 h-9 rounded-xl shadow-md border border-teal-500/10 animate-float" />
               <span className="font-extrabold text-lg text-slate-800 dark:text-slate-200">MedTrack AI Setup</span>
             </div>
             <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">

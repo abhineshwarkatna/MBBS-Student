@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import medtrackLogo from '../assets/medtrack_logo.png';
 import {
   LayoutDashboard,
   BookOpen,
   ClipboardList,
   CalendarRange,
-  GraduationCap,
   Brain,
   Bot,
   Activity,
@@ -64,9 +64,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         
         {/* Brand Logo */}
         <div className="p-6 border-b border-slate-200/50 dark:border-slate-800/50 flex items-center space-x-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-tr from-teal-500 to-blue-500 text-white shadow-md shadow-teal-500/20">
-            <GraduationCap size={24} />
-          </div>
+          <img src={medtrackLogo} alt="MedTrack AI Logo" className="w-11 h-11 rounded-xl shadow-md border border-teal-500/20 animate-float" />
           <div>
             <h1 className="font-extrabold text-xl leading-none bg-gradient-to-r from-teal-600 to-blue-600 dark:from-teal-400 dark:to-blue-400 bg-clip-text text-transparent tracking-tight">
               MedTrack AI
@@ -141,9 +139,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* MOBILE HEADER */}
       <header className="md:hidden glass border-b border-slate-200/50 dark:border-slate-800/50 sticky top-0 z-20 flex justify-between items-center px-4 py-3">
         <div className="flex items-center space-x-2">
-          <div className="p-2 rounded-lg bg-gradient-to-tr from-teal-500 to-blue-500 text-white shadow-md shadow-teal-500/10">
-            <GraduationCap size={18} />
-          </div>
+          <img src={medtrackLogo} alt="MedTrack AI Logo" className="w-8 h-8 rounded-lg shadow-sm" />
           <span className="font-extrabold text-lg bg-gradient-to-r from-teal-600 to-blue-600 dark:from-teal-400 dark:to-blue-400 bg-clip-text text-transparent tracking-tight">
             MedTrack AI
           </span>
