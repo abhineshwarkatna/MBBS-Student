@@ -29,6 +29,8 @@ export const SettingsView: React.FC = () => {
   const [sleepTarget, setSleepTarget] = useState(profile.sleepTarget);
   const [waterTarget, setWaterTarget] = useState(profile.waterTarget);
   const [studyTarget, setStudyTarget] = useState(profile.dailyStudyTarget);
+  const [exerciseTarget, setExerciseTarget] = useState(profile.exerciseTarget || 45);
+  const [targetPercentage, setTargetPercentage] = useState(profile.targetPercentage || 75);
 
 
 
@@ -49,9 +51,11 @@ export const SettingsView: React.FC = () => {
       dailyStepTarget: stepTarget,
       sleepTarget: sleepTarget,
       waterTarget: waterTarget,
-      dailyStudyTarget: studyTarget
+      dailyStudyTarget: studyTarget,
+      exerciseTarget: exerciseTarget,
+      targetPercentage: targetPercentage
     });
-    alert('🎯 Lifestyle targets updated successfully.');
+    alert('🎯 Lifestyle and academic targets updated successfully.');
   };
 
   const handleExportData = () => {
@@ -189,6 +193,24 @@ export const SettingsView: React.FC = () => {
                   step="0.5"
                   value={studyTarget}
                   onChange={(e) => setStudyTarget(parseFloat(e.target.value))}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-850 bg-slate-100/50 dark:bg-slate-900/50 text-xs font-semibold outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-450 mb-1.5">Daily Exercise (Minutes)</label>
+                <input
+                  type="number"
+                  value={exerciseTarget}
+                  onChange={(e) => setExerciseTarget(parseInt(e.target.value))}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-850 bg-slate-100/50 dark:bg-slate-900/50 text-xs font-semibold outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-450 mb-1.5">Required Attendance (%)</label>
+                <input
+                  type="number"
+                  value={targetPercentage}
+                  onChange={(e) => setTargetPercentage(parseInt(e.target.value))}
                   className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-850 bg-slate-100/50 dark:bg-slate-900/50 text-xs font-semibold outline-none"
                 />
               </div>

@@ -81,6 +81,36 @@ export const DashboardView: React.FC = () => {
     .reduce((sum, fs) => sum + fs.duration, 0);
   const studyHoursToday = (studyMinsToday / 60).toFixed(1);
 
+  // Calculate study streak dynamically from focus sessions
+  const getStudyStreak = () => {
+    const focusDates = new Set(focusSessions.map(fs => fs.date));
+    let streak = 0;
+    const checkDate = new Date();
+    
+    for (let i = 0; i < 30; i++) {
+      const dateStr = checkDate.toISOString().split('T')[0];
+      if (focusDates.has(dateStr)) {
+        streak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        if (i === 0) { 
+          checkDate.setDate(checkDate.getDate() - 1);
+          const yesterdayStr = checkDate.toISOString().split('T')[0];
+          if (focusDates.has(yesterdayStr)) {
+            streak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+            i++;
+            continue;
+          }
+        }
+        break;
+      }
+    }
+    return streak || 1;
+  };
+
+  const studyStreak = getStudyStreak();
+
   // Health today
   const todayHealth = healthMetrics.find(m => m.date === todayStr) || {
     steps: 8432,
@@ -150,7 +180,7 @@ export const DashboardView: React.FC = () => {
         <div className="flex items-center space-x-3 bg-gradient-to-r from-orange-500/10 to-rose-500/10 border border-orange-500/20 dark:border-orange-500/30 px-5 py-3 rounded-2xl">
           <span className="text-2xl animate-pulse">🔥</span>
           <div>
-            <h4 className="text-sm font-black text-orange-600 dark:text-orange-400">7 Day Study Streak</h4>
+            <h4 className="text-sm font-black text-orange-600 dark:text-orange-400">{studyStreak} Day Study Streak</h4>
             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Academic Consistency</p>
           </div>
         </div>

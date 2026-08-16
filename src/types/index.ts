@@ -164,7 +164,7 @@ export interface JournalEntry {
 }
 
 export interface DeviceConnection {
-  provider: 'Smartwatch' | 'Google Fit' | 'Apple Health';
+  provider: 'Smartwatch' | 'Google Fit' | 'Apple Health' | 'Google Health' | 'Strava' | string;
   connected: boolean;
   lastSync: string;
 }

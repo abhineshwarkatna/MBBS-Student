@@ -34,7 +34,10 @@ export const HealthView: React.FC = () => {
     updateTodayHealth,
     gainXpPoints,
     syncHealthData,
-    deleteHealthData
+    deleteHealthData,
+    getStravaAuthUrl,
+    syncStravaData,
+    disconnectStrava
   } = useApp();
 
   const [activeSyncing, setActiveSyncing] = useState(false);
@@ -64,7 +67,12 @@ export const HealthView: React.FC = () => {
   const handleSyncClick = async () => {
     setActiveSyncing(true);
     try {
-      await syncHealthData();
+      if (deviceConnections.some(c => c.provider === 'Google Health' && c.connected)) {
+        await syncHealthData();
+      }
+      if (deviceConnections.some(c => c.provider === 'Strava' && c.connected)) {
+        await syncStravaData();
+      }
       gainXpPoints(15); // XP reward for syncing
     } catch (err) {
       console.error(err);
@@ -255,7 +263,7 @@ export const HealthView: React.FC = () => {
         {/* DEVICE SYNC CONTROLLERS */}
         <div className="lg:col-span-2 glass-panel rounded-3xl p-6 border border-slate-200/50 dark:border-slate-800/50 shadow-md space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="font-extrabold text-sm uppercase tracking-wider text-slate-400">Google Health Connection</h3>
+            <h3 className="font-extrabold text-sm uppercase tracking-wider text-slate-400">Wearable Health Connections</h3>
             {deviceConnections.some(c => c.connected) && (
               <button
                 onClick={async () => {
@@ -278,38 +286,62 @@ export const HealthView: React.FC = () => {
               Since browser applications run in secure sandboxes, direct retrieval of raw, native on-device Android <em>Health Connect</em> databases is restricted. 
             </p>
             <p>
-              Instead, this application redirects you to authorize safe read scopes (<strong>Steps, Sleep, Workouts, Heart Rate</strong>) from the cloud-synced Google Health / Fitbit REST APIs. Your device must sync Health Connect to the cloud to fetch.
+              Instead, this application redirects you to authorize safe read scopes (<strong>Steps, Sleep, Workouts, Heart Rate</strong>) from the cloud-synced Google Health / Fitbit REST APIs, or your Strava workout feed. Your device must sync to the cloud to fetch.
             </p>
           </div>
 
           <div className="space-y-3">
-            {deviceConnections.map((dc) => (
-              <div 
-                key={dc.provider}
-                className="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200/60 dark:border-slate-850 bg-white/40 dark:bg-slate-900/40"
-              >
-                <div className="flex items-center space-x-3">
-                  <Smartphone className="text-teal-500" size={18} />
-                  <div>
-                    <h5 className="font-bold text-xs text-slate-800 dark:text-slate-200">{dc.provider} Cloud Gateway</h5>
-                    <p className="text-[9px] text-slate-450">
-                      {dc.connected ? `Last Synced: ${dc.lastSync}` : 'Status: Disconnected'}
-                    </p>
-                  </div>
-                </div>
-                
-                <button
-                  onClick={() => toggleDeviceConnection(dc.provider)}
-                  className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider ${
-                    dc.connected 
-                      ? 'bg-red-500/10 text-red-500 hover:bg-red-500/15' 
-                      : 'bg-teal-500/10 text-teal-650 dark:text-teal-400 hover:bg-teal-500/15'
-                  }`}
+            {deviceConnections.map((dc) => {
+              const isStrava = dc.provider.toLowerCase().includes('strava');
+              return (
+                <div 
+                  key={dc.provider}
+                  className="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200/60 dark:border-slate-850 bg-white/40 dark:bg-slate-900/40"
                 >
-                  {dc.connected ? 'Disconnect' : 'Connect API'}
-                </button>
-              </div>
-            ))}
+                  <div className="flex items-center space-x-3">
+                    <Smartphone className={isStrava ? "text-orange-500" : "text-teal-500"} size={18} />
+                    <div>
+                      <h5 className="font-bold text-xs text-slate-800 dark:text-slate-200">{dc.provider} Gateway</h5>
+                      <p className="text-[9px] text-slate-450">
+                        {dc.connected ? `Last Synced: ${dc.lastSync}` : 'Status: Disconnected'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {isStrava ? (
+                    dc.connected ? (
+                      <button
+                        onClick={async () => {
+                          await disconnectStrava();
+                          alert("Strava Account Disconnected.");
+                        }}
+                        className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider bg-red-500/10 text-red-500 hover:bg-red-500/15"
+                      >
+                        Disconnect
+                      </button>
+                    ) : (
+                      <a
+                        href={getStravaAuthUrl()}
+                        className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider bg-orange-500/10 text-orange-650 dark:text-orange-400 hover:bg-orange-500/15"
+                      >
+                        Connect API
+                      </a>
+                    )
+                  ) : (
+                    <button
+                      onClick={() => toggleDeviceConnection(dc.provider)}
+                      className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider ${
+                        dc.connected 
+                          ? 'bg-red-500/10 text-red-500 hover:bg-red-500/15' 
+                          : 'bg-teal-500/10 text-teal-650 dark:text-teal-400 hover:bg-teal-500/15'
+                      }`}
+                    >
+                      {dc.connected ? 'Disconnect' : 'Connect API'}
+                    </button>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 

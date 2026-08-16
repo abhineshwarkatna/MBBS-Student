@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 export const Onboarding: React.FC = () => {
-  const { setIsOnboarded, updateProfile } = useApp();
+  const { setIsOnboarded, updateProfile, signInWithGoogle, getStravaAuthUrl } = useApp();
   const [step, setStep] = useState(1);
   
   // State for onboarding form fields
@@ -35,7 +35,6 @@ export const Onboarding: React.FC = () => {
   const [waterTarget, setWaterTarget] = useState(8);
   const [exerciseTarget, setExerciseTarget] = useState(45);
   
-  const [connectSmartwatch, setConnectSmartwatch] = useState(true);
   const [selectedHabits, setSelectedHabits] = useState<string[]>([
     'Review Flashcards',
     'Practice MCQs',
@@ -100,12 +99,7 @@ export const Onboarding: React.FC = () => {
       exerciseTarget: exerciseTarget
     });
 
-    // 2. Set device connections
-    if (connectSmartwatch) {
-      localStorage.setItem('medtrack_smartwatch_connected', 'true');
-    }
-
-    // 3. Complete onboarding
+    // 2. Complete onboarding
     setIsOnboarded(true);
   };
 
@@ -153,6 +147,30 @@ export const Onboarding: React.FC = () => {
                   Let's configure your academic environment. First, tell us your name and medical institution.
                 </p>
               </div>
+
+              {/* Google OAuth Login Option */}
+              <div className="bg-slate-100/40 dark:bg-slate-900/40 border border-slate-200/40 dark:border-slate-800/40 p-5 rounded-2xl text-center space-y-3">
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400">Sync with Supabase cloud database:</p>
+                <button
+                  onClick={async () => {
+                    try {
+                      await signInWithGoogle();
+                    } catch (err: any) {
+                      alert("Google Login Error: " + err.message);
+                    }
+                  }}
+                  className="w-full py-3 px-4 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs flex items-center justify-center gap-2.5 shadow-sm transition-all"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24">
+                    <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.65 14.98 1 12 1 7.35 1 3.37 3.67 1.39 7.56l3.92 3.04c.97-2.9 3.67-5.56 6.69-5.56z" />
+                    <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.46c-.29 1.48-1.14 2.73-2.4 3.58l3.73 2.89c2.18-2.01 3.7-4.97 3.7-8.62z" />
+                    <path fill="#FBBC05" d="M5.31 10.6c-.25-.76-.4-1.56-.4-2.4s.15-1.64.4-2.4L1.39 2.76C.5 4.54 0 6.52 0 8.6c0 2.08.5 4.06 1.39 5.84l3.92-3.04z" />
+                    <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.73-2.89c-1.1.74-2.51 1.18-4.23 1.18-3.02 0-5.72-2.66-6.69-5.56L1.39 14.4C3.37 19.33 7.35 23 12 23z" />
+                  </svg>
+                  <span>Continue with Google</span>
+                </button>
+              </div>
+
               <div className="space-y-4 text-left">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Student Name</label>
@@ -450,35 +468,45 @@ export const Onboarding: React.FC = () => {
           {step === 10 && (
             <div className="space-y-6 animate-fade-in">
               <div className="text-left">
-                <h2 className="text-2xl font-bold mb-2">Sync Your Smartwatch</h2>
+                <h2 className="text-2xl font-bold mb-2">Sync Your Wearable Accounts</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm">
-                  MedTrack AI connects with smart wearable sensors to retrieve steps and sleep metrics automatically.
+                  MedTrack AI integrates securely with Strava or Google Health REST APIs to synchronize athletic activities, walking steps, and calorie counts.
                 </p>
               </div>
               <div className="space-y-4 text-left">
-                <button
-                  onClick={() => setConnectSmartwatch(!connectSmartwatch)}
-                  className={`w-full flex items-center justify-between p-5 rounded-2xl border transition-all ${
-                    connectSmartwatch
-                      ? 'border-teal-500 bg-teal-500/5'
-                      : 'border-slate-200 dark:border-slate-800 bg-transparent'
-                  }`}
+                {/* Strava option */}
+                <a
+                  href={getStravaAuthUrl()}
+                  className="w-full flex items-center justify-between p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/40 dark:bg-slate-900/40 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all cursor-pointer"
                 >
                   <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-teal-500/10 text-teal-600 rounded-xl">
+                    <div className="p-3 bg-orange-500/10 text-orange-500 rounded-xl">
                       <Activity size={24} />
                     </div>
                     <div className="text-left">
-                      <h4 className="font-extrabold text-slate-800 dark:text-slate-200">Connect Smartwatch Device</h4>
-                      <p className="text-xs text-slate-400">Enable automatic step, heart rate, and sleep syncs</p>
+                      <h4 className="font-extrabold text-slate-800 dark:text-slate-200">Connect Strava Activity API</h4>
+                      <p className="text-xs text-slate-400">Sync outdoor runs, walks, calories, and distances</p>
                     </div>
                   </div>
-                  <span className={`px-4 py-1.5 rounded-lg text-xs font-bold ${connectSmartwatch ? 'bg-teal-500 text-white shadow-md' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
-                    {connectSmartwatch ? 'Connected' : 'Disconnect'}
+                  <span className="px-4 py-1.5 rounded-lg text-xs font-bold bg-orange-500 text-white shadow-md">
+                    Connect Strava
                   </span>
-                </button>
-                <div className="flex items-center space-x-2 text-[11px] text-slate-400 bg-slate-100 dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/50 p-3.5 rounded-xl">
-                  <span>🔒 Your health data is processed locally and never shared publicly. Refer to privacy panels for deletion.</span>
+                </a>
+
+                {/* Google Health option */}
+                <div className="w-full flex items-center justify-between p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/40 dark:bg-slate-900/40">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-teal-500/10 text-teal-500 rounded-xl">
+                      <Activity size={24} />
+                    </div>
+                    <div className="text-left">
+                      <h4 className="font-extrabold text-slate-800 dark:text-slate-200">Google Health Connection</h4>
+                      <p className="text-xs text-slate-400">Automatically enabled for profiles. Manage in Health dashboard</p>
+                    </div>
+                  </div>
+                  <span className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500">
+                    Ready
+                  </span>
                 </div>
               </div>
             </div>

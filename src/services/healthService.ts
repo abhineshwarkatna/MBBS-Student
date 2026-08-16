@@ -141,12 +141,18 @@ export const healthService = {
     if (error) throw error;
 
     const googleConnection = (data || []).find(c => c.provider === 'google-health');
+    const stravaConnection = (data || []).find(c => c.provider === 'strava');
 
     return [
       {
         provider: 'Google Health' as any,
         connected: googleConnection ? googleConnection.connection_status === 'connected' : false,
         lastSync: googleConnection?.last_sync_at ? new Date(googleConnection.last_sync_at).toLocaleTimeString() : 'Never'
+      },
+      {
+        provider: 'Strava' as any,
+        connected: stravaConnection ? stravaConnection.connection_status === 'connected' : false,
+        lastSync: stravaConnection?.last_sync_at ? new Date(stravaConnection.last_sync_at).toLocaleTimeString() : 'Never'
       }
     ];
   },
@@ -161,6 +167,54 @@ export const healthService = {
         connection_status: connected ? 'connected' : 'disconnected',
         last_sync_at: connected ? new Date().toISOString() : null
       }, { onConflict: 'user_id,provider' });
+  },
+
+  getStravaAuthUrl() {
+    const clientId = import.meta.env.VITE_STRAVA_CLIENT_ID || 'your_strava_client_id';
+    const redirectUri = encodeURIComponent(`${window.location.origin}`);
+    return `https://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=read,activity:read_all&approval_prompt=force`;
+  },
+
+  async exchangeStravaToken(code: string): Promise<any> {
+    const { data: session } = await supabase.auth.getSession();
+    const token = session?.session?.access_token;
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-strava`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ action: 'exchange-token', code })
+    });
+    return await response.json();
+  },
+
+  async syncStravaData(): Promise<any> {
+    const { data: session } = await supabase.auth.getSession();
+    const token = session?.session?.access_token;
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-strava`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ action: 'sync-activities' })
+    });
+    return await response.json();
+  },
+
+  async disconnectStrava(): Promise<any> {
+    const { data: session } = await supabase.auth.getSession();
+    const token = session?.session?.access_token;
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-strava`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ action: 'disconnect' })
+    });
+    return await response.json();
   },
 
   async deleteHealthData(userId: string): Promise<void> {

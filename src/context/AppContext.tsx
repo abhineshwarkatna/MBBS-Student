@@ -60,9 +60,13 @@ interface AppContextType {
   currentUser: any;
   signUp: (email: string, password: string, fullName: string, college: string) => Promise<any>;
   signIn: (email: string, password: string) => Promise<any>;
+  signInWithGoogle: () => Promise<any>;
   signOut: () => Promise<void>;
   syncHealthData: () => Promise<void>;
   deleteHealthData: () => Promise<void>;
+  getStravaAuthUrl: () => string;
+  syncStravaData: () => Promise<any>;
+  disconnectStrava: () => Promise<any>;
 
   updateProfile: (profile: Partial<UserProfile>) => void;
   addSubject: (sub: Omit<Subject, 'id' | 'progress' | 'studyHours'>) => void;
@@ -236,9 +240,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   useEffect(() => {
+    // Check for Strava OAuth callback '?code=xxxx'
+    const urlParams = new URLSearchParams(window.location.search);
+    const stravaCode = urlParams.get('code');
+
     // Check session
-    authService.getUser().then(u => {
+    authService.getUser().then(async u => {
       setCurrentUser(u);
+      
+      // If we have a code and a logged-in user, run the token exchange
+      if (stravaCode && u) {
+        try {
+          console.log("Exchanging Strava code:", stravaCode);
+          await healthService.exchangeStravaToken(stravaCode);
+          // Strip parameters from URL
+          const cleanUrl = window.location.origin + window.location.pathname;
+          window.history.replaceState({}, document.title, cleanUrl);
+          alert("⚡ Strava Connected and Configured Successfully!");
+        } catch (err) {
+          console.error("Strava exchange error:", err);
+          alert("Failed to connect Strava. Please try again.");
+        }
+      }
+      
       refreshScoresAndState(u);
     }).catch(() => {
       refreshScoresAndState(null);
@@ -698,10 +722,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return await authService.signIn(email, password);
   };
 
+  const signInWithGoogle = async () => {
+    return await authService.signInWithGoogle();
+  };
+
   const signOut = async () => {
     await authService.signOut();
     setCurrentUser(null);
     refreshScoresAndState(null);
+  };
+
+  const getStravaAuthUrl = () => {
+    return healthService.getStravaAuthUrl();
+  };
+
+  const syncStravaData = async () => {
+    if (currentUser) {
+      try {
+        const result = await healthService.syncStravaData();
+        await refreshScoresAndState();
+        return result;
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+
+  const disconnectStrava = async () => {
+    if (currentUser) {
+      try {
+        const result = await healthService.disconnectStrava();
+        await refreshScoresAndState();
+        return result;
+      } catch (err) {
+        console.error(err);
+      }
+    }
   };
 
   return (
@@ -736,9 +792,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         currentUser,
         signUp,
         signIn,
+        signInWithGoogle,
         signOut,
         syncHealthData,
         deleteHealthData,
+        getStravaAuthUrl,
+        syncStravaData,
+        disconnectStrava,
 
         updateProfile,
         addSubject,
