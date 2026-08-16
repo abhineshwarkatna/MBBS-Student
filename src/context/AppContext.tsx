@@ -192,6 +192,43 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setDeviceConnections(dbDeviceConns);
         setAIChatHistory(dbChat);
 
+        // Fetch Profile from Supabase
+        const { data: dbProfile, error: profileErr } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', activeUser.id)
+          .maybeSingle();
+
+        if (dbProfile && !profileErr) {
+          const mappedProfile: UserProfile = {
+            name: dbProfile.full_name || '',
+            college: dbProfile.college || '',
+            mbbsYear: dbProfile.mbbs_year === 1 ? '1st MBBS' : dbProfile.mbbs_year === 2 ? '2nd MBBS' : dbProfile.mbbs_year === 3 ? '3rd MBBS' : 'Final Year',
+            semester: dbProfile.semester || '6th Semester',
+            targetPercentage: dbProfile.target_percentage || 75,
+            dailyStudyTarget: dbProfile.daily_study_target || 4.5,
+            wakeTime: dbProfile.wake_time || '06:00',
+            sleepTime: dbProfile.sleep_time || '23:00',
+            dailyStepTarget: dbProfile.daily_step_target || 10000,
+            sleepTarget: dbProfile.daily_sleep_target || 7.5,
+            waterTarget: dbProfile.water_target || 8,
+            exerciseTarget: dbProfile.exercise_target || 45,
+            xp: dbProfile.xp || 0,
+            level: dbProfile.level || 1,
+            badges: []
+          };
+          setProfile(mappedProfile);
+          db.updateProfile(mappedProfile);
+          
+          if (dbProfile.full_name && dbProfile.college) {
+            setIsOnboarded(true);
+            localStorage.setItem('medtrack_onboarded', 'true');
+          } else {
+            setIsOnboarded(false);
+            localStorage.setItem('medtrack_onboarded', 'false');
+          }
+        }
+
         const { score, breakdown } = db.calculateTodayScore();
         setTodayScore(score);
         setTodayScoreBreakdown(breakdown);

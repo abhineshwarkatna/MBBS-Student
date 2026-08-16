@@ -3,9 +3,6 @@ import { useApp } from '../context/AppContext';
 import { 
   User, 
   Activity, 
-  ShieldAlert, 
-  Trash2, 
-  Download,
   Sun,
   MoonStar
 } from 'lucide-react';
@@ -58,24 +55,7 @@ export const SettingsView: React.FC = () => {
     alert('🎯 Lifestyle and academic targets updated successfully.');
   };
 
-  const handleExportData = () => {
-    const dataStr = localStorage.getItem('medtrack_ai_database') || '{}';
-    const blob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `medtrack_export_${new Date().toISOString().split('T')[0]}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
 
-  const handleDeleteData = () => {
-    if (confirm('🚨 Warning: This will permanently delete all your logged clinical case logbooks, revisions, study scores, and health datasets. Do you wish to continue?')) {
-      localStorage.removeItem('medtrack_ai_database');
-      localStorage.removeItem('medtrack_onboarded');
-      window.location.reload();
-    }
-  };
 
   return (
     <div className="space-y-6 text-left pb-12">
@@ -250,34 +230,7 @@ export const SettingsView: React.FC = () => {
           </div>
         </div>
 
-        {/* PRIVACY & SECURITY CONTROLS */}
-        <div className="glass-panel rounded-3xl p-6 border border-slate-200/50 dark:border-slate-800/50 shadow-md space-y-5">
-          <h3 className="font-extrabold text-sm uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-            <ShieldAlert size={16} />
-            Data Protection & HIPAA Privacy
-          </h3>
-          
-          <p className="text-[11px] text-slate-400 leading-relaxed font-semibold">
-            All database state tables are hosted in sandbox local environments. If Supabase integration is not actively configured, data is preserved in local storage.
-          </p>
 
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={handleExportData}
-              className="flex items-center space-x-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-250 text-slate-800 dark:text-slate-200 px-4 py-2.5 rounded-xl font-bold text-xs"
-            >
-              <Download size={14} />
-              <span>Export local JSON</span>
-            </button>
-            <button
-              onClick={handleDeleteData}
-              className="flex items-center space-x-1.5 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/15 px-4 py-2.5 rounded-xl font-bold text-xs"
-            >
-              <Trash2 size={14} />
-              <span>Reset Database</span>
-            </button>
-          </div>
-        </div>
 
       </div>
 

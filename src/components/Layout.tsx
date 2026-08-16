@@ -19,7 +19,8 @@ import {
   Award as BadgeIcon,
   Sun,
   MoonStar,
-  CheckSquare
+  CheckSquare,
+  LogOut
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -36,7 +37,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     levelUpNotification,
     setLevelUpNotification,
     badgeNotification,
-    setBadgeNotification
+    setBadgeNotification,
+    signOut
   } = useApp();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -122,16 +124,30 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           })}
         </nav>
 
-        {/* Footer controls (Theme Toggler) */}
-        <div className="p-4 border-t border-slate-200/50 dark:border-slate-800/50 flex justify-between items-center">
-          <span className="text-xs text-slate-400 dark:text-slate-500">Theme</span>
+        {/* Footer controls (Theme & Logout) */}
+        <div className="p-4 border-t border-slate-200/50 dark:border-slate-800/50 space-y-3">
+          <div className="flex justify-between items-center">
+            <span className="text-xs text-slate-400 dark:text-slate-500">Theme</span>
+            <button
+              id="theme-toggler"
+              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200/40 dark:border-slate-800/40 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all text-slate-700 dark:text-slate-300"
+              title="Toggle Theme"
+            >
+              {theme === 'light' ? <MoonStar size={16} /> : <Sun size={16} />}
+            </button>
+          </div>
+          
           <button
-            id="theme-toggler"
-            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200/40 dark:border-slate-800/40 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all text-slate-700 dark:text-slate-300"
-            title="Toggle Theme"
+            onClick={async () => {
+              if (confirm("Are you sure you want to log out of your session?")) {
+                await signOut();
+              }
+            }}
+            className="w-full flex items-center justify-center space-x-2 py-2 bg-red-500/10 hover:bg-red-500/15 text-red-500 font-bold rounded-xl text-xs transition-all border border-red-500/10"
           >
-            {theme === 'light' ? <MoonStar size={16} /> : <Sun size={16} />}
+            <LogOut size={13} />
+            <span>Sign Out Session</span>
           </button>
         </div>
       </aside>
@@ -198,9 +214,23 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 })}
               </nav>
             </div>
-            <div className="pt-6 border-t border-slate-200/50 dark:border-slate-800/50 flex justify-between text-xs text-slate-400">
-              <span>MedTrack AI v1.0.0</span>
-              <span>AIIMS Delhi</span>
+            <div className="pt-6 border-t border-slate-200/50 dark:border-slate-800/50 space-y-4">
+              <button
+                onClick={async () => {
+                  setMobileMenuOpen(false);
+                  if (confirm("Are you sure you want to log out of your session?")) {
+                    await signOut();
+                  }
+                }}
+                className="w-full flex items-center justify-center space-x-2 py-2 bg-red-500/10 hover:bg-red-500/15 text-red-500 font-bold rounded-xl text-xs transition-all border border-red-500/10"
+              >
+                <LogOut size={13} />
+                <span>Sign Out Session</span>
+              </button>
+              <div className="flex justify-between text-[10px] text-slate-400">
+                <span>MedTrack AI v1.0.0</span>
+                <span>AIIMS Delhi</span>
+              </div>
             </div>
           </div>
         </div>

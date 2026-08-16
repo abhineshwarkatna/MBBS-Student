@@ -2,6 +2,7 @@ import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Layout } from './components/Layout';
 import { Onboarding } from './components/Onboarding';
+import { AuthView } from './components/AuthView';
 import { DashboardView } from './components/DashboardView';
 import { SubjectsView } from './components/SubjectsView';
 import { ClinicalView } from './components/ClinicalView';
@@ -16,7 +17,12 @@ import { AchievementsView } from './components/AchievementsView';
 import { SettingsView } from './components/SettingsView';
 
 const AppContent: React.FC = () => {
-  const { isOnboarded, currentView } = useApp();
+  const { currentUser, isOnboarded, currentView } = useApp();
+
+  // If not logged in, render the login gate
+  if (!currentUser) {
+    return <AuthView />;
+  }
 
   // If first time, render the onboarding setup flow
   if (!isOnboarded) {
