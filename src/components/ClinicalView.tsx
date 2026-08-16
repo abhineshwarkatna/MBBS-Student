@@ -125,9 +125,12 @@ export const ClinicalView: React.FC = () => {
       <div className="flex items-start space-x-3 bg-red-500/15 border border-red-500/20 dark:border-red-500/30 p-4 rounded-2xl">
         <ShieldAlert className="text-red-500 flex-shrink-0 mt-0.5" size={18} />
         <div>
-          <h4 className="text-xs font-black text-red-600 dark:text-red-400">HIPAA & Patient Privacy Protocol</h4>
+          <h4 className="text-xs font-black text-red-600 dark:text-red-400">Patient Confidentiality & Regulatory Disclosure</h4>
           <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
-            Strict confidentiality is mandatory. Never input real patient names, registration IDs, cell numbers, or specific identifiers in case summaries. Educational logs should remain fully anonymized.
+            ⚠️ <strong>DO NOT enter patient names, phone numbers, addresses, hospital IDs, photographs, or other identifiable patient information.</strong> Educational cases must remain fully anonymized. 
+          </p>
+          <p className="text-[10px] text-red-400/90 mt-1">
+            <em>Disclaimer: This web application is NOT automatically HIPAA-compliant. Users are solely responsible for ensuring patient privacy protection.</em>
           </p>
         </div>
       </div>
